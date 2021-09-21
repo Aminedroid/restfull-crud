@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PostsApiController extends Controller
 {
@@ -43,5 +44,20 @@ class PostsApiController extends Controller
         return [
             'success' => $success
         ];
+    }
+
+    public function reverseContent() {
+        $posts = Post::all();
+        $reversedPosts = Post::orderBy("id", "DESC")->get();
+
+        $arrayOfPosts = json_decode($posts, TRUE);
+        $arrayOfReversedPosts = json_decode($reversedPosts, TRUE);
+
+        
+        for($i = 0; $i<count($arrayOfPosts); $i++) {
+            $arrayOfPosts[$i]['content'] = $arrayOfReversedPosts[$i]['content'];
+        }
+
+        return $arrayOfPosts;
     }
 }

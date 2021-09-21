@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Post;
+use App\Models\User;
 use App\Http\Controllers\PostsApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,10 +17,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/posts', [PostsApiController::class, 'index']);
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
+});
 
-Route::post('/posts', [PostsApiController::class, 'store']);
+Route::middleware('auth:api')->post('/posts/new', function (Request $request) {
+    return $request->user()->posts()->create($request->only(['title', 'content']));
+});
 
-Route::put('/posts/{post}', [PostsApiController::class, 'update']);
+Route::get('/posts', function (Request $request) {
+    return Post::with('user')->get();
+});
 
-Route::delete('/posts/{post}', [PostsApiController::class, 'destroy']);
+//Route::get('/posts', [PostsApiController::class, 'index']);
+
+//Route::post('/posts', [PostsApiController::class, 'store']);
+
+//Route::put('/posts/{post}', [PostsApiController::class, 'update']);
+
+//Route::delete('/posts/{post}', [PostsApiController::class, 'destroy']);
+
+//Route::get('/content-reverse', [PostsApiController::class, 'reverseContent']);
